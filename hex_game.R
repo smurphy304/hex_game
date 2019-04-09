@@ -19,9 +19,10 @@ refresh_sim <- function() {
   sim_mat
 }
 
-turn <- 1
+
 sim_mat <- refresh_sim()
 populate_mat <- function(sim_mat) {
+  turn <- 1
   while(any(is.na(sim_mat))) {
     emptycoord <- which(is.na(sim_mat))
     nxtmove <- sample(emptycoord, size = 1)
