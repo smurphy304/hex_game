@@ -33,29 +33,46 @@ populate_mat <- function(sim_mat) {
   return(sim_mat)
 }
 
+
+## Determine if target link matches any of it's hexagonal neighbors and return their indices
+link_match <- function(link, sim_mat) {
+  coordrep <- length(sim_mat[,1])
+  coordvec <- 1:length(sim_mat)
+  
+  links <- c(link - 1, link + 1,
+             link - coordrep, link + coordrep,
+             link - coordrep - 1,
+             link + coordrep + 1)
+  links <- links[links > 0]
+  
+  if (link %in% coordvec[coordvec %% coordrep == 0]) {
+    links <- links[!(links %% coordrep == 1)]
+  }
+  player <- sim_mat[link]
+  valid_links <- links[sim_mat[links] == player & !is.na(sim_mat[links])]
+  return(valid_links)
+}
+
+## Iterate over links along edge to determine if there are any complete paths to opposing edge
 winner_select <- function (sim_mat) {
   coordrep <- length(sim_mat[,1])
   coordvec <- 1:length(sim_mat)
-  winvec <- coordvec[coordvec %% coordrep == 1]
   
-  link_match <- function(link, sim_mat) {
-    links <- c(link - 1, link + 1,
-               link - coordrep, link + coordrep,
-               link - coordrep - 1,
-               link + coordrep + 1)
-    links <- links[links > 0]
-    
-    if (link %in% coordvec[coordvec %% coordrep == 0]) {
-      links <- links[!(links %% coordrep == 1)]
-    }
-    player <- sim_mat[link]
-    valid_links <- links[sim_mat[links] == player & !is.na(sim_mat[links])]
-    return(valid_links)
-  }
+  # Check sim_mat is square matrix (for a fair game)
+  if(coordrep^2 != length(sim_mat)) stop("sim_mat must be a square matrix")
+  
+  winvec_list <- list("X" = 1:coordrep,
+                      "O" = coordvec[coordvec %% coordrep == 1])
+  
+  start_edge_o <- coordvec[coordvec %% coordrep == 0 &
+                             sim_mat == "O"]
+  start_edge_x <- coordvec[coordvec %in% (coordrep^2 - coordrep):(coordrep^2) &
+                             sim_mat == "X"]
+  start_edge <- c(start_edge_o, start_edge_x)
   
   allchecked_links <- 0
   winner <- FALSE
-  for(startloc in coordvec[coordvec %% coordrep == 0]) {
+  for(startloc in start_edge) {
     if(startloc %in% allchecked_links | is.na(sim_mat[startloc])) next()
     # Hexagonal grid
     player <- sim_mat[startloc]
@@ -66,12 +83,12 @@ winner_select <- function (sim_mat) {
       tocheck_links <- newlinks[!(newlinks %in% checked_links |
                                     is.na(newlinks))]
       checked_links <- c(checked_links, newlinks)
-      if(any(checked_links %in% winvec)) break()
+      if(any(checked_links %in% winvec_list[[player]])) break()
       newlinks <- lapply(tocheck_links, FUN = link_match, sim_mat = sim_mat) %>% 
         unlist %>% as.numeric()
-    }
+    } 
     
-    if(any(checked_links %in% winvec)) {
+    if(any(checked_links %in% winvec_list[[player]])) {
       print(paste0("Player '", player, "' is victorious!"))
       plotmat <- sim_mat
       plotmat[checked_links] <- "Win-path"
@@ -92,7 +109,7 @@ sim_mat[3,3] <- NA
 sim_mat <- refresh_sim()
 sim_mat <- populate_mat(sim_mat)
 winner_select(sim_mat)
-
+hexplot(sim_mat, colorkey)
 
 self_play <- function(sim_mat) {
   draw <- TRUE
