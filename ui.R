@@ -14,7 +14,7 @@ shinyUI(fluidPage(
 
     # Show a plot of the generated distribution
     mainPanel(
-      plotOutput("hexplot")
+      plotOutput("hexplot", width = "60%")
     )
   )
   

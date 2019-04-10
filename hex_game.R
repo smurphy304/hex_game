@@ -70,10 +70,9 @@ winner_select <- function (sim_mat) {
   winvec_list <- list("X" = 1:coordrep,
                       "O" = coordvec[coordvec %% coordrep == 1])
   
-  start_edge_o <- coordvec[coordvec %% coordrep == 0 &
-                             sim_mat == "O"]
-  start_edge_x <- coordvec[coordvec %in% (coordrep^2 - coordrep):(coordrep^2) &
-                             sim_mat == "X"]
+  start_edge_o <- coordvec[sim_mat == "O" & coordvec %% coordrep == 0]
+  start_edge_x <- coordvec[sim_mat == "X" & coordvec %in% 
+                             (coordrep^2 - coordrep + 1):(coordrep^2)]
   start_edge <- c(start_edge_o, start_edge_x)
   
   allchecked_links <- 0
