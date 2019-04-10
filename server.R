@@ -11,8 +11,6 @@ shinyServer(function(input, output) {
     output_mat <- self_play(sim_mat)
     
     output$hexplot <- renderPlot({
-      input$regen_hex
-      # output_mat <- self_play(sim_mat)
       hexplot(output_mat, colorkey)
     }) 
   })

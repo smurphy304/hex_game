@@ -40,14 +40,19 @@ link_match <- function(link, sim_mat) {
   coordrep <- length(sim_mat[,1])
   coordvec <- 1:length(sim_mat)
   
+  
+  hex_offset <- ifelse((link %% coordrep) %% 2 == 0,  1, -1)
+  hex_offset <- ifelse(link %% coordrep == 0 & link %% 2 == 1,
+                       -hex_offset, hex_offset)
+  
   links <- c(link - 1, link + 1,
              link - coordrep, link + coordrep,
-             link - coordrep - 1,
-             link + coordrep + 1)
-  links <- links[links > 0]
-  
-  if (link %in% coordvec[coordvec %% coordrep == 0]) {
-    links <- links[!(links %% coordrep == 1)]
+             link + coordrep * hex_offset - 1,
+             link + coordrep * hex_offset + 1)
+  links <- links[links > 0 & links < max(coordvec)]
+  # Prevent wrapping (checking links from bottom against top)
+  if (link %in% coordvec[coordvec %% coordrep %in% c(0, 1)]) {
+    links <- links[!(links %% coordrep == 1 - link %% coordrep)]
   }
   player <- sim_mat[link]
   valid_links <- links[sim_mat[links] == player & !is.na(sim_mat[links])]
@@ -104,7 +109,7 @@ winner_select <- function (sim_mat) {
   return(winner)
 }
 
-debug(winner_select)
+# debug(winner_select)
 
 sim_mat[3,3] <- NA
 sim_mat <- refresh_sim()
@@ -132,8 +137,8 @@ self_play <- function(sim_mat) {
 sim_mat <- refresh_sim()
 output_mat <- self_play(sim_mat)
 hexplot(output_mat, colorkey)
-undebug(winner_select)
 winner_select(output_mat)
+
 
 colorkey <- list("X" = "Black",
                  "O" = "White")
