@@ -38,6 +38,22 @@ shinyServer(function(input, output) {
     }) 
   })
   
+  observeEvent(input$plot_click, {
+    print(input$plot_click$x)
+    print(input$plot_click$y)
+    
+    x <- floor(input$plot_click$x)
+    y <- 5 - floor(input$plot_click$y)
+    new_entry <- y + 5 * x
+    
+    update_mat <- sim_mat()
+    update_mat[new_entry] <- "O"
+    sim_mat(update_mat)
+    
+    output$hexplot <- renderPlot({
+      hexplot(sim_mat(), colorkey)
+    })
+  })
   
   
   
