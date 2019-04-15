@@ -11,12 +11,17 @@ shinyUI(fluidPage(
       actionButton("regen_hex",
                    "Refresh hex game"),
       actionButton("self_play",
-                   "Randomly Finish Game")
+                   "Randomly Finish Game"),
+      sliderInput("mat_size",
+                  "Number of Rows/Columns on the board",
+                  min = 1, max = 10, value = 5)
     ),
 
     # Show a plot of the generated distribution
     mainPanel(
-      plotOutput("hexplot", width = "60%", dblclick = "plot_click")
+      plotOutput("hexplot",
+                 height = "400px", width = "600px",
+                 dblclick = "plot_click")
     )
   )
   

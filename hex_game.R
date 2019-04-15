@@ -181,6 +181,7 @@ hexplot <- function(plot_matrix, colorkey) {
 ## Potential additions
 # Saving state (bookmarking)
 # Odds of success
+# 1 and 2 player modes
 
 
 
