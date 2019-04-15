@@ -158,60 +158,29 @@ hexplot <- function(plot_matrix, colorkey) {
 }
 
 
-# Experiments with plots -----------------------------------------------------
-## Hexbin
-library(hexbin)
-
-
-hexbin(output_mat)
-
-hexbinplot(hexbin(output_mat))
-x <- rnorm(10000)
-y <- rnorm(10000)
-(bin <- hexbin(x, y))
-
-plot(hexbin(x, y + x*(x+1)/4),
-     main = "(X, X(X+1)/4 + Y)  where X,Y ~ rnorm(10000)")
-
-plot(bin, style = "nested.lattice")
-
-x[runif(6, 0, length(x))] <- NA
-y[runif(7, 0, length(y))] <- NA
-hbN <- hexbin(x,y)
-summary(hbN)
-
-
-## plotrix (SUCCESS!!)
-library(plotrix)
-
-x<-matrix(rnorm(100),nrow=10)
-cellcol<-matrix(rep("#DCDCDC",100),nrow=10)
-cellcol[x<0]<-color.scale(x[x<0],c(1,0.8),c(0,0.8),0)
-cellcol[x>0]<-color.scale(x[x>0],0,c(0.8,1),c(0.8,0))
-# now do hexagons without borders
-color2D.matplot(x,cellcolors=cellcol,xlab="Columns",ylab="Rows",
-                do.hex=TRUE,main="2D matrix plot (hexagons)",border=NA)
-
-
-
-#### Interesting color fade
-rb<-colorRampPalette(c("red","blue"))(255)
-trans<-sapply(seq(from=0,to=1,length.out=255),function(op) rgb(1,1,1,op))
-
-image(matrix(1:255,ncol=255,nrow=255),col=rb,xaxt="n",yaxt="n")
-par(new=T)
-image(t(matrix(255:1,ncol=255,nrow=255)),col=trans,xaxt="n",yaxt="n")
 
 ####### Goals ==================================================================
+## Short term
+# Winner messages
+# Be able to interact with the game through controls for self play
 # Be able to input moves/play against the rng gods
 #     - Specify move on specific turn
 #     - run a game through console
 #     - run a game through shiny
+
+
+## Medium term
+# Highlighting victory PATH in display
+# Turn count
+
+## Long Term
 # make rng gods smarter 
 #     - Simulating play? (take best result of X number of simulated games, but how many reps?)
 #     - better formula (maximise future choise, efficiency, heuristics, ML?)
 
-
+## Potential additions
+# Saving state (bookmarking)
+# Odds of success
 
 
 

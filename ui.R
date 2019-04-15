@@ -9,7 +9,9 @@ shinyUI(fluidPage(
   sidebarLayout(
     sidebarPanel(
       actionButton("regen_hex",
-                   "Refresh hex game")
+                   "Refresh hex game"),
+      actionButton("self_play",
+                   "Randomly Finish Game")
     ),
 
     # Show a plot of the generated distribution
