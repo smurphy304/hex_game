@@ -86,6 +86,10 @@ shinyServer(function(input, output) {
       hexplot(sim_mat(), colorkey)
     })
     
+    if(winner_select(sim_mat())) {
+      print("winner alert should appear")
+      shinyalert("Winner!", "A player has won the game.", type = "success")
+    }
     
   })
 })

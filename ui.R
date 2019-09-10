@@ -1,7 +1,9 @@
 library(shiny)
+library(shinyalert)
 source("hex_game.R")
 
 shinyUI(fluidPage(
+  useShinyalert(),
 
   # Application title
   titlePanel("Welcome to the Hex Game!"),
