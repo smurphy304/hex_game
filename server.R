@@ -1,11 +1,13 @@
 library(shiny)
 
 shinyServer(function(input, output) {
-
+  turn <- reactiveVal(value = 1, label = "Turn")
+  
   
   colorkey <- list("X" = "Black",
                    "O" = "White")
-  
+  print("Turn")
+  print("Done")
   sim_mat <- reactiveVal()
   clean_sim <- refresh_sim()
   sim_mat(clean_sim) 
@@ -17,16 +19,25 @@ shinyServer(function(input, output) {
   # values <- reactiveValues()
   # sim_mat <- refresh_sim()
   
-  
-  
   output$hexplot <- renderPlot({
     hexplot(sim_mat(), colorkey)
-  }) 
+  })
   
+  observeEvent(input$playturn, {
+    new_sim <- contra_turn(sim_mat(), turn())
+    sim_mat(new_sim)
+    turn(turn() + 1)
+    output$hexplot <- renderPlot({
+      hexplot(sim_mat(), colorkey)
+    })
+  })
+  
+  # Refresh the Hex game & grid
   isolate({
     observeEvent(input$regen_hex, {
       clean_sim <- refresh_sim()
       sim_mat(clean_sim) 
+      turn(1)
       output$hexplot <- renderPlot({
         hexplot(sim_mat(), colorkey)
       })
@@ -34,11 +45,11 @@ shinyServer(function(input, output) {
   })
   
   observeEvent(input$self_play, {
-    sp_mat <- self_play(sim_mat())
+    sp_mat <- self_play(sim_mat(), turn())
     sim_mat(sp_mat)
     output$hexplot <- renderPlot({
       hexplot(sim_mat(), colorkey)
-    }) 
+    })
   })
   
   observeEvent(input$plot_click, {
@@ -48,7 +59,8 @@ shinyServer(function(input, output) {
     print("y:")
     print(input$plot_click$y)
     
-    
+    tval <- turn()
+    print(tval)
     
     ## Scaling click area to plot area and number of hex chunks
     half_hexes <- input$mat_size * 2 + 1
@@ -60,24 +72,20 @@ shinyServer(function(input, output) {
     x <- (input$plot_click$coords_img$x - left_range - (y %% 2)*x_hexrange) %/%
       (x_hexrange*2)
     
-    # x <- floor(input$plot_click$x - (floor(input$plot_click$y) %% 2)/2)
-    
-    
-    
-    
     ## Adding target entry to sim_mat & replotting
     update_mat <- sim_mat()
     new_entry <- (input$mat_size - y) + (input$mat_size * x)
     if(is.na(update_mat[new_entry])) {
-      update_mat[new_entry] <- "O"
+      if(turn() %% 2 == 0) move <- "X" else move <- "O"
+      update_mat[new_entry] <- move
     }
     sim_mat(update_mat)
+    turn(turn() + 1)
     
     output$hexplot <- renderPlot({
       hexplot(sim_mat(), colorkey)
     })
+    
+    
   })
-  
-  
-  
 })

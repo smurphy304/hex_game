@@ -1,4 +1,5 @@
 library(shiny)
+source("hex_game.R")
 
 shinyUI(fluidPage(
 
@@ -8,6 +9,8 @@ shinyUI(fluidPage(
   # Sidebar with a slider input for number of bins
   sidebarLayout(
     sidebarPanel(
+      actionButton("playturn",
+                   "AI Turn"),
       actionButton("regen_hex",
                    "Refresh hex game"),
       actionButton("self_play",
@@ -24,18 +27,4 @@ shinyUI(fluidPage(
                  dblclick = "plot_click")
     )
   )
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
 ))

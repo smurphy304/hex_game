@@ -2,39 +2,31 @@
 library(dplyr)
 library(plot.matrix)
 library(plotrix)
+# library(purrr)
 
-refresh_sim <- function() {
-  sim_mat <- matrix(nrow = 5, ncol = 5)
-  
-  #  Initial state
-  sim_mat[1,1] <- "O"
-  sim_mat[3,3] <- "O"
-  sim_mat[5,3] <- "O"
-  
-  sim_mat[2,2] <- "X"
-  sim_mat[1,3] <- "X"
-  sim_mat[3,4] <- "X"
+refresh_sim <- function(mat_size = 5, preset = 1) {
   
   
-  sim_mat
-}
-
-
-sim_mat <- refresh_sim()
-populate_mat <- function(sim_mat) {
-  turn <- 1
-  while(any(is.na(sim_mat))) {
-    emptycoord <- which(is.na(sim_mat))
-    nxtmove <- sample(emptycoord, size = 1)
-    if(turn %% 2 == 0) move <- "X" else move <- "O"
-    
-    sim_mat[nxtmove] <- move
-    turn <- turn + 1
+  ## Format for translation (Maybe make into a function)[row, col] (col - 1) * mat_size + row
+  if(is.null(preset)) return(sim_mat)
+  if(preset == 1) {
+    mat_size <- 5
+    precoords <- list("O" = c((1 - 1)  * mat_size + 1, (3 - 1) * mat_size + 3,
+                              (3 - 1) * mat_size + 5),
+                      "X" = c((2 - 1) * mat_size + 2, (3 - 1) * mat_size + 1,
+                              (4 - 1) * mat_size + 3)) # bad math
   }
+  
+  sim_mat <- matrix(nrow = mat_size, ncol = mat_size) %>% 
+    replace(precoords[[1]], names(precoords[1])) %>% 
+    replace(precoords[[2]], names(precoords[2])) 
+   
+  
   return(sim_mat)
 }
 
-
+## Note need to finish fixing refresh sim preset work
+# debug(refresh_sim)
 ## Determine if target link matches any of it's hexagonal neighbors and return their indices
 link_match <- function(link, sim_mat) {
   coordrep <- length(sim_mat[,1])
@@ -108,15 +100,9 @@ winner_select <- function (sim_mat) {
   return(winner)
 }
 
-# debug(winner_select)
 
-sim_mat[3,3] <- NA
-sim_mat <- refresh_sim()
-sim_mat <- populate_mat(sim_mat)
-winner_select(sim_mat)
-hexplot(sim_mat, colorkey)
 
-self_play <- function(sim_mat) {
+self_play <- function(sim_mat, turn) {
   draw <- TRUE
   while(any(is.na(sim_mat))) {
     emptycoord <- which(is.na(sim_mat))
@@ -133,14 +119,16 @@ self_play <- function(sim_mat) {
   if(draw) print("Draw") 
   return(sim_mat)
 }
-sim_mat <- refresh_sim()
-output_mat <- self_play(sim_mat)
-hexplot(output_mat, colorkey)
-winner_select(output_mat)
 
+contra_turn <- function(sim_mat, turn) {
+  emptycoord <- which(is.na(sim_mat))
+  nxtmove <- sample(emptycoord, size = 1)
+  if(turn %% 2 == 0) move <- "X" else move <- "O"
+  
+  sim_mat[nxtmove] <- move
+  return(sim_mat)
+}
 
-colorkey <- list("X" = "Black",
-                 "O" = "White")
 
 hexplot <- function(plot_matrix, colorkey) {
   dims <- dim(plot_matrix)
@@ -158,6 +146,24 @@ hexplot <- function(plot_matrix, colorkey) {
 }
 
 
+
+
+
+
+### Old Funs
+
+# populate_mat <- function(sim_mat) {
+#   turn <- 1
+#   while(any(is.na(sim_mat))) {
+#     emptycoord <- which(is.na(sim_mat))
+#     nxtmove <- sample(emptycoord, size = 1)
+#     if(turn %% 2 == 0) move <- "X" else move <- "O"
+#     
+#     sim_mat[nxtmove] <- move
+#     turn <- turn + 1
+#   }
+#   return(sim_mat)
+# }
 
 ####### Goals ==================================================================
 ## Short term
