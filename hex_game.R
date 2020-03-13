@@ -97,7 +97,7 @@ winner_select <- function (sim_mat) {
     }
     allchecked_links <- c(allchecked_links, checked_links)
   }
-  if(!winner) print("Draw Game, no Victors")
+  if(!any(winner)) print("Draw Game, no Victors")
   return(winner)
 }
 
@@ -156,13 +156,34 @@ active_player <- function(turn) {
 }
 ## AI training funs?
 # Game end utility function
-ge_utility <- function(sim_mat, player) {
-  sim_mat
+get_utility <- function(sim_mat, player) {
+  if(!(player %in% c("X", "O"))) stop("Player improperly specified")
+  outcomes <- winner_select(sim_mat)
+  if(outcomes[[player]]) {
+    return(1)
+  } else if (!any(outcomes)) {
+    return(0)
+  } else return(-1)
+  
 }
 
 
 # Game state utility estimation function
-function(sim_mat, player)
+sim_mat
+output_mat
+est_utility <- function(sim_mat, player) {
+  end_util <- get_utility(sim_mat, player)
+  if(end_util != 0) return(end_util)
+  
+  # shortest gap utility
+  pl_short 
+  # Opponent shortest gap utility
+  op_short
+  # Current Turn weighting (defensive if op_short < pl_short)
+  
+  # Number of short gaps?? (Future to add difficulty)
+  
+}
 
 
 ### Old Funs
