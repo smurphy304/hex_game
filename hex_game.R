@@ -4,23 +4,24 @@ library(plot.matrix)
 library(plotrix)
 # library(purrr)
 
-refresh_sim <- function(mat_size = 5, preset = 1) {
+# Creates a fresh simulation matrix for play
+refresh_sim <- function(mat_size = 5, preset = TRUE) {
   
-  
+  if(mat_size != 5) preset <- FALSE
   ## Format for translation (Maybe make into a function)[row, col] (col - 1) * mat_size + row
-  if(is.null(preset)) return(sim_mat)
-  if(preset == 1) {
+  if(preset) {
     mat_size <- 5
     precoords <- list("O" = c((1 - 1)  * mat_size + 1, (3 - 1) * mat_size + 3,
                               (3 - 1) * mat_size + 5),
                       "X" = c((2 - 1) * mat_size + 2, (3 - 1) * mat_size + 1,
-                              (4 - 1) * mat_size + 3)) # bad math
+                              (4 - 1) * mat_size + 3)) 
+    
+    sim_mat <- matrix(nrow = mat_size, ncol = mat_size) %>% 
+      replace(precoords[[1]], names(precoords[1])) %>% 
+      replace(precoords[[2]], names(precoords[2])) 
+  } else {
+    sim_mat <- matrix(nrow = mat_size, ncol = mat_size)
   }
-  
-  sim_mat <- matrix(nrow = mat_size, ncol = mat_size) %>% 
-    replace(precoords[[1]], names(precoords[1])) %>% 
-    replace(precoords[[2]], names(precoords[2])) 
-   
   
   return(sim_mat)
 }
@@ -101,7 +102,8 @@ winner_select <- function (sim_mat) {
 }
 
 
-
+## Completes an entire game/fills all remaining empty spaces until winner is selected
+# BUG - sometimes overwrites already selected cells (potentially a display issue)
 self_play <- function(sim_mat, turn) {
   draw <- TRUE
   while(any(is.na(sim_mat))) {
@@ -120,6 +122,8 @@ self_play <- function(sim_mat, turn) {
   return(sim_mat)
 }
 
+## Randomly selects an empty location and makes AI play it
+# ISSUE - does not check for/display winner after ai turn
 contra_turn <- function(sim_mat, turn) {
   emptycoord <- which(is.na(sim_mat))
   nxtmove <- sample(emptycoord, size = 1)
@@ -167,17 +171,17 @@ hexplot <- function(plot_matrix, colorkey) {
 
 ####### Goals ==================================================================
 ## Short term
-# Winner messages
-# Be able to interact with the game through controls for self play
-# Be able to input moves/play against the rng gods
+# Winner messages :)
+# Be able to interact with the game through controls for self play :)
+# Be able to input moves/play against the rng gods :)
 #     - Specify move on specific turn
 #     - run a game through console
 #     - run a game through shiny
 
 
 ## Medium term
-# Highlighting victory PATH in display
-# Turn count
+# Highlighting victory PATH in display :/
+# Turn count :/
 
 ## Long Term
 # make rng gods smarter 
