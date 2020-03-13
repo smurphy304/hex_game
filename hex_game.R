@@ -69,7 +69,7 @@ winner_select <- function (sim_mat) {
   start_edge <- c(start_edge_o, start_edge_x)
   
   allchecked_links <- 0
-  winner <- FALSE
+  winner <- list("X" = FALSE, "O" = FALSE)
   for(startloc in start_edge) {
     if(startloc %in% allchecked_links | is.na(sim_mat[startloc])) next()
     # Hexagonal grid
@@ -92,7 +92,7 @@ winner_select <- function (sim_mat) {
       plotmat[checked_links] <- "Win-path"
       plot(plotmat, col = c("O" = "white", "Win-path" = "green", "X" = "black"), 
            na.col = "orange")
-      winner <- TRUE
+      winner[[player]] <- TRUE
       return(winner)
     }
     allchecked_links <- c(allchecked_links, checked_links)
@@ -113,7 +113,7 @@ self_play <- function(sim_mat, turn) {
     
     sim_mat[nxtmove] <- move
     turn <- turn + 1
-    if(winner_select(sim_mat)) {
+    if(any(winner_select(sim_mat))) {
       draw <- FALSE
       break()
     }
@@ -150,8 +150,19 @@ hexplot <- function(plot_matrix, colorkey) {
 }
 
 
+### Experimental Section ----
+active_player <- function(turn) {
+  ifelse(turn %% 2, "X", "Y")
+}
+## AI training funs?
+# Game end utility function
+ge_utility <- function(sim_mat, player) {
+  sim_mat
+}
 
 
+# Game state utility estimation function
+function(sim_mat, player)
 
 
 ### Old Funs

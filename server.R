@@ -46,7 +46,7 @@ shinyServer(function(input, output) {
     output$hexplot <- renderPlot({
       hexplot(sim_mat(), colorkey)
     })
-    if(winner_select(sim_mat())) {
+    if(any(winner_select(sim_mat()))) {
       shinyalert("Winner!", "A player has won the game.", type = "success")
     }
   })
@@ -58,7 +58,7 @@ shinyServer(function(input, output) {
     output$hexplot <- renderPlot({
       hexplot(sim_mat(), colorkey)
     })
-    if(winner_select(sim_mat())) {
+    if(any(winner_select(sim_mat()))) {
       shinyalert("Winner!", "A player has won the game.", type = "success")
     }
   })
@@ -104,7 +104,7 @@ shinyServer(function(input, output) {
       hexplot(sim_mat(), colorkey)
     })
     
-    if(winner_select(sim_mat())) {
+    if(any(winner_select(sim_mat()))) {
       shinyalert("Winner!", "A player has won the game.", type = "success")
     }
     
