@@ -27,15 +27,6 @@ shinyServer(function(input, output) {
     hexplot(sim_mat(), colorkey)
   })
   
-  observeEvent(input$playturn, {
-    new_sim <- contra_turn(sim_mat(), turn())
-    sim_mat(new_sim)
-    turn(turn() + 1)
-    output$hexplot <- renderPlot({
-      hexplot(sim_mat(), colorkey)
-    })
-  })
-  
   # Refresh the Hex game & grid
   isolate({
     observeEvent(input$regen_hex, {
@@ -48,15 +39,31 @@ shinyServer(function(input, output) {
       })
     })
   })
-  
+  # AI finish game
   observeEvent(input$self_play, {
     sp_mat <- self_play(sim_mat(), turn())
     sim_mat(sp_mat)
     output$hexplot <- renderPlot({
       hexplot(sim_mat(), colorkey)
     })
+    if(winner_select(sim_mat())) {
+      shinyalert("Winner!", "A player has won the game.", type = "success")
+    }
+  })
+  # AI turn handling
+  observeEvent(input$playturn, {
+    new_sim <- contra_turn(sim_mat(), turn())
+    sim_mat(new_sim)
+    turn(turn() + 1)
+    output$hexplot <- renderPlot({
+      hexplot(sim_mat(), colorkey)
+    })
+    if(winner_select(sim_mat())) {
+      shinyalert("Winner!", "A player has won the game.", type = "success")
+    }
   })
   
+  # Player moves handling
   observeEvent(input$plot_click, {
     print(input$plot_click)
     print("x:")
